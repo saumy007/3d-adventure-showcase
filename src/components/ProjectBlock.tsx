@@ -1,6 +1,6 @@
 
 import { useRef, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Project } from '../types/project';
@@ -15,6 +15,11 @@ const ProjectBlock = ({ project, onSelect }: ProjectBlockProps) => {
   const meshRef = useRef<THREE.Mesh>();
   const [isNear, setIsNear] = useState(false);
   const [hovered, setHovered] = useState(false);
+  
+  // Load texture for the block
+  const texture = useLoader(THREE.TextureLoader, project.textureUrl);
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1, 1);
 
   useFrame(({ camera }) => {
     if (meshRef.current) {
@@ -32,7 +37,10 @@ const ProjectBlock = ({ project, onSelect }: ProjectBlockProps) => {
     >
       <boxGeometry args={[1, 2, 1]} />
       <meshStandardMaterial 
-        color={hovered ? "#6ab3ff" : "#4a9eff"}
+        map={texture}
+        color={hovered ? "#ffffff" : "#cccccc"}
+        metalness={0.5}
+        roughness={0.5}
         emissive={hovered ? "#2a5999" : "#000000"}
       />
       

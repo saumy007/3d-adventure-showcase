@@ -1,9 +1,10 @@
-
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls, useKeyboardControls } from '@react-three/drei';
 import { useState, useRef } from 'react';
 import { projects, Project } from '../types/project';
 import * as THREE from 'three';
+import { Skybox } from './Skybox';
+import ProjectBlock from './ProjectBlock';
 
 interface SceneProps {
   onProjectSelect: (project: Project) => void;
@@ -51,6 +52,8 @@ const Scene = ({ onProjectSelect }: SceneProps) => {
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       
+      <Skybox />
+
       {/* Ground */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
         <planeGeometry args={[100, 100]} />
@@ -67,14 +70,11 @@ const Scene = ({ onProjectSelect }: SceneProps) => {
 
       {/* Project displays */}
       {projects.map((project) => (
-        <mesh
+        <ProjectBlock
           key={project.id}
-          position={project.position}
-          onClick={() => onProjectSelect(project)}
-        >
-          <boxGeometry args={[1, 2, 1]} />
-          <meshStandardMaterial color="#4a9eff" />
-        </mesh>
+          project={project}
+          onSelect={onProjectSelect}
+        />
       ))}
     </>
   );

@@ -1,12 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import Scene from '../components/Scene';
+import Interface from '../components/Interface';
+import ProjectModal from '../components/ProjectModal';
+import { useState } from 'react';
+import { Project } from '../types/project';
 
 const Index = () => {
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="relative w-full h-screen bg-gray-900">
+      <Canvas
+        className="w-full h-full"
+        camera={{ position: [0, 2, 5], fov: 75 }}
+        shadows
+      >
+        <Suspense fallback={null}>
+          <Scene onProjectSelect={setSelectedProject} />
+        </Suspense>
+      </Canvas>
+      <Interface />
+      {selectedProject && (
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
     </div>
   );
 };

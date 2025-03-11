@@ -1,6 +1,6 @@
 
 import { useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls, useKeyboardControls } from '@react-three/drei';
 import { useState, useRef } from 'react';
 import { projects, Project } from '../types/project';
 import * as THREE from 'three';
@@ -9,25 +9,36 @@ interface SceneProps {
   onProjectSelect: (project: Project) => void;
 }
 
+// Define the controls map type
+enum Controls {
+  forward = 'forward',
+  backward = 'backward',
+  left = 'left',
+  right = 'right',
+}
+
 const Scene = ({ onProjectSelect }: SceneProps) => {
   const [characterPosition, setCharacterPosition] = useState([0, 0, 0]);
   const characterRef = useRef<THREE.Group>();
+  
+  // Set up keyboard controls
+  const [, getKeys] = useKeyboardControls<Controls>();
 
-  useFrame((state, delta) => {
-    // Add character movement logic here
+  useFrame(() => {
     if (characterRef.current) {
-      // Simple keyboard controls
       const moveSpeed = 0.05;
-      if (state.keyboard.down('KeyW')) {
+      const { forward, backward, left, right } = getKeys();
+
+      if (forward) {
         characterRef.current.position.z -= moveSpeed;
       }
-      if (state.keyboard.down('KeyS')) {
+      if (backward) {
         characterRef.current.position.z += moveSpeed;
       }
-      if (state.keyboard.down('KeyA')) {
+      if (left) {
         characterRef.current.position.x -= moveSpeed;
       }
-      if (state.keyboard.down('KeyD')) {
+      if (right) {
         characterRef.current.position.x += moveSpeed;
       }
     }
